@@ -11,5 +11,10 @@
     "backend:dev": "npm run dev -w backend",
     "mobile:start": "npm run start -w mobile",
     "web:dev": "npm run dev -w web"
+  },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-test-renderer": "18.3.1"
   }
 }

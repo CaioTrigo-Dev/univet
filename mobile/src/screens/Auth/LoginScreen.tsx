@@ -14,6 +14,7 @@ import { colors } from '../../tokens/colors';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 /**
  * Tela de Login
@@ -24,10 +25,11 @@ export const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const { showToast } = useToast();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+      showToast('Por favor, preencha todos os campos.', 'error');
       return;
     }
 
@@ -44,7 +46,7 @@ export const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       
       await signIn('demo-token', demoUser);
     } catch (error: any) {
-      Alert.alert('Erro', error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -89,6 +91,7 @@ export const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           loading={loading}
           onPress={handleLogin}
           style={styles.loginButton}
+          accessibilityLabel="Botão para realizar login na conta"
         />
 
         <View style={styles.footer}>

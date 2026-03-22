@@ -2,3 +2,7 @@
 UNIVET_FINAL.md 
 .env
 node_modules
+coverage
+.expo
+backend/coverage
+mobile/.expo

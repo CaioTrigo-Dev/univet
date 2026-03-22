@@ -20,6 +20,10 @@ export const colors = {
     disabled: '#BDBDBD',
     inverse: '#FFFFFF',
   },
+  border: {
+    main: '#E0E0E0',
+    light: '#F0F0F0',
+  },
 };
 
 export const darkColors = {
@@ -34,5 +38,9 @@ export const darkColors = {
     secondary: '#AAAAAA',
     disabled: '#666666',
     inverse: '#212121',
+  },
+  border: {
+    main: '#333333',
+    light: '#444444',
   },
 };

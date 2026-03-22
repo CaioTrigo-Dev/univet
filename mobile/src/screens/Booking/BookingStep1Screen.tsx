@@ -4,6 +4,7 @@ import { usePets } from '../../hooks/usePets';
 import { useBooking } from '../../contexts/BookingContext';
 import { Card } from '../../components/organisms/Card';
 import { Icon } from '../../components/atoms/Icon';
+import { Skeleton } from '../../components/atoms/Skeleton';
 import { colors } from '../../tokens/colors';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
@@ -12,7 +13,7 @@ import { typography } from '../../tokens/typography';
  * Agendamento Passo 1: Selecionar Pet
  */
 export const BookingStep1Screen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { pets } = usePets();
+  const { pets, loading } = usePets();
   const { setPet } = useBooking();
 
   const handleSelectPet = (pet: any) => {
@@ -24,21 +25,29 @@ export const BookingStep1Screen: React.FC<{ navigation: any }> = ({ navigation }
     <View style={styles.container}>
       <Text style={styles.title}>Para quem é a consulta?</Text>
       
-      <FlatList
-        data={pets}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelectPet(item)}>
-            <Card style={styles.petCard}>
-              <View style={styles.petInfo}>
-                <Icon name="Dog" size={32} />
-                <Text style={styles.petName}>{item.name}</Text>
-                <Icon name="ChevronRight" color={colors.text.hint} />
-              </View>
-            </Card>
-          </TouchableOpacity>
-        )}
-      />
+      {loading ? (
+        <View>
+          <Skeleton height={80} style={{ marginBottom: spacing.md }} />
+          <Skeleton height={80} style={{ marginBottom: spacing.md }} />
+          <Skeleton height={80} />
+        </View>
+      ) : (
+        <FlatList
+          data={pets}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleSelectPet(item)}>
+              <Card style={styles.petCard}>
+                <View style={styles.petInfo}>
+                  <Icon name="Dog" size={32} />
+                  <Text style={styles.petName}>{item.name}</Text>
+                  <Icon name="ChevronRight" color={colors.text.disabled} />
+                </View>
+              </Card>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };

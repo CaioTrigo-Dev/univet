@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper: Verifica se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Verifica se o usuário é o dono do documento
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Helper: Verifica se o usuário tem uma role específica
+    function hasRole(role) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    // Coleção Users: Apenas o próprio usuário ou admin podem ler/escrever
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && (isOwner(userId) || hasRole('admin'));
+    }
+
+    // Coleção Pets: Donos, Vets e Admin podem ler. Apenas donos e admin podem escrever.
+    match /pets/{petId} {
+      allow read: if isAuthenticated() && (isOwner(resource.data.ownerId) || hasRole('vet') || hasRole('admin'));
+      allow create: if isAuthenticated() && (isOwner(request.resource.data.ownerId) || hasRole('admin'));
+      allow update, delete: if isAuthenticated() && (isOwner(resource.data.ownerId) || hasRole('admin'));
+    }
+
+    // Coleção Vets: Qualquer um autenticado pode ler. Apenas admin pode escrever.
+    match /vets/{vetId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && hasRole('admin');
+    }
+
+    // Coleção Services: Qualquer um autenticado pode ler. Apenas admin pode escrever.
+    match /services/{serviceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && hasRole('admin');
+    }
+
+    // Coleção Appointments: Dono, Vet e Admin podem ler/escrever
+    match /appointments/{appId} {
+      allow read: if isAuthenticated() && (isOwner(resource.data.tutorId) || isOwner(resource.data.vetId) || hasRole('admin'));
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (isOwner(resource.data.tutorId) || isOwner(resource.data.vetId) || hasRole('admin'));
+      allow delete: if isAuthenticated() && hasRole('admin');
+    }
+
+    // Coleção Medical Records: Dono (Pet Owner), Vet e Admin podem ler. Apenas Vets e Admin escrevem.
+    match /medical_records/{recordId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (hasRole('vet') || hasRole('admin'));
+    }
+
+    // Coleção Vaccines: Dono (Pet Owner), Vet e Admin podem ler. Apenas Vets e Admin escrevem.
+    match /vaccines/{vaccineId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (hasRole('vet') || hasRole('admin'));
+    }
+
+    // Coleção Notifications: Apenas o destinatário ou admin podem ler/escrever
+    match /notifications/{notifId} {
+      allow read, update: if isAuthenticated() && (isOwner(resource.data.userId) || hasRole('admin'));
+      allow create, delete: if isAuthenticated() && hasRole('admin');
+    }
+  }
+}

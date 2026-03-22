@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/Home/HomeScreen';
 import { SearchScreen } from '../screens/Home/SearchScreen';
 import { FindClinicScreen } from '../screens/Home/FindClinicScreen';
+import { ServiceDetailScreen } from '../screens/Home/ServiceDetailScreen';
 import { BookingStack } from './BookingStack';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,11 @@ export const HomeStack = () => {
         name="FindClinic" 
         component={FindClinicScreen} 
         options={{ headerShown: true, title: 'Unidades UniVet' }} 
+      />
+      <Stack.Screen 
+        name="ServiceDetail" 
+        component={ServiceDetailScreen as any} 
+        options={{ headerShown: true, title: 'Detalhes do Serviço' }} 
       />
       <Stack.Screen name="BookingStack" component={BookingStack} />
     </Stack.Navigator>

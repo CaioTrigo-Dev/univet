@@ -4,6 +4,13 @@ import * as dotenv from 'dotenv';
 import authRoutes from './infrastructure/http/routes/AuthRoutes';
 import petsRoutes from './infrastructure/http/routes/PetsRoutes';
 import appointmentsRoutes from './infrastructure/http/routes/AppointmentsRoutes';
+import servicesRoutes from './infrastructure/http/routes/ServicesRoutes';
+import vetsRoutes from './infrastructure/http/routes/VetsRoutes';
+import medicalRecordsRoutes from './infrastructure/http/routes/MedicalRecordsRoutes';
+import vaccinesRoutes from './infrastructure/http/routes/VaccinesRoutes';
+import usersRoutes from './infrastructure/http/routes/UsersRoutes';
+import notificationsRoutes from './infrastructure/http/routes/NotificationsRoutes';
+import reviewsRoutes from './infrastructure/http/routes/ReviewsRoutes';
 
 // Configuração de variáveis de ambiente
 dotenv.config();
@@ -19,6 +26,13 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/pets', petsRoutes);
 app.use('/api/appointments', appointmentsRoutes);
+app.use('/api/services', servicesRoutes);
+app.use('/api/vets', vetsRoutes);
+app.use('/api/medical-records', medicalRecordsRoutes);
+app.use('/api/vaccines', vaccinesRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 // Rota de verificação de saúde da API
 app.get('/health', (req, res) => {

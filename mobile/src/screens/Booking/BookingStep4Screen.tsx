@@ -4,22 +4,28 @@ import { useBooking } from '../../contexts/BookingContext';
 import { Card } from '../../components/organisms/Card';
 import { Button } from '../../components/atoms/Button';
 import { Icon } from '../../components/atoms/Icon';
+import { TouchableOpacity } from 'react-native';
 import { colors } from '../../tokens/colors';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 import { appointmentsService } from '../../services/appointments.service';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 /**
  * Agendamento Passo 4: Resumo Final
  */
 export const BookingStep4Screen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { booking, resetBooking } = useBooking();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const handleConfirm = async () => {
     setLoading(true);
     try {
       await appointmentsService.create('demo-token', {
+        tutorId: user?.uid || 'anonymous',
         petId: booking.pet!.id,
         serviceId: booking.serviceId!,
         vetId: booking.vetId!,
@@ -28,14 +34,11 @@ export const BookingStep4Screen: React.FC<{ navigation: any }> = ({ navigation }
         status: 'pending'
       });
       
-      Alert.alert('Sucesso', 'Consulta agendada com sucesso!', [
-        { text: 'OK', onPress: () => {
-          resetBooking();
-          navigation.navigate('Home');
-        }}
-      ]);
+      showToast('Consulta agendada com sucesso!', 'success');
+      resetBooking();
+      navigation.navigate('Home');
     } catch (error: any) {
-      Alert.alert('Erro', error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -50,18 +53,27 @@ export const BookingStep4Screen: React.FC<{ navigation: any }> = ({ navigation }
           <Icon name="PawPrint" size={20} color={colors.text.secondary} />
           <Text style={styles.label}>Pet:</Text>
           <Text style={styles.value}>{booking.pet?.name}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BookingStep1')}>
+            <Text style={styles.editLink}>Alterar</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.row}>
           <Icon name="Activity" size={20} color={colors.text.secondary} />
           <Text style={styles.label}>Serviço:</Text>
           <Text style={styles.value}>{booking.serviceId === '1' ? 'Consulta Clínica' : 'Outro'}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BookingStep2')}>
+            <Text style={styles.editLink}>Alterar</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.row}>
           <Icon name="Calendar" size={20} color={colors.text.secondary} />
           <Text style={styles.label}>Data:</Text>
           <Text style={styles.value}>{booking.scheduledAt?.toLocaleString('pt-BR')}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BookingStep3')}>
+            <Text style={styles.editLink}>Alterar</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={[styles.row, styles.totalRow]}>
@@ -77,9 +89,18 @@ export const BookingStep4Screen: React.FC<{ navigation: any }> = ({ navigation }
           onPress={handleConfirm}
         />
         <Button 
+          title="Esvaziar Carrinho" 
+          variant="secondary" 
+          style={{ marginTop: spacing.sm }}
+          onPress={() => {
+            resetBooking();
+            navigation.navigate('BookingStep1');
+          }}
+        />
+        <Button 
           title="Voltar" 
           variant="outline" 
-          style={{ marginTop: spacing.md }}
+          style={{ marginTop: spacing.sm }}
           onPress={() => navigation.goBack()}
         />
       </View>
@@ -136,6 +157,12 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.lg,
     fontFamily: typography.fonts.heading,
     color: colors.secondary.main,
+  },
+  editLink: {
+    color: colors.primary.main,
+    fontSize: typography.sizes.xs,
+    fontFamily: typography.fonts.subheading,
+    marginLeft: spacing.sm,
   },
   footer: {
     marginTop: 'auto',

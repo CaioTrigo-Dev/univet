@@ -2,7 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeStack } from './HomeStack';
 import { PetsStack } from './PetsStack';
-import { ProfileScreen } from '../screens/Profile/ProfileScreen';
+import { AppointmentsHistoryScreen } from '../screens/Appointments/AppointmentsHistoryScreen';
+import { NotificationsScreen } from '../screens/Notifications/NotificationsScreen';
+import { ProfileStack } from './ProfileStack';
 import { Icon } from '../components/atoms/Icon';
 import { colors } from '../tokens/colors';
 
@@ -36,8 +38,24 @@ export const AppNavigator = () => {
         }}
       />
       <Tab.Screen 
+        name="AppointmentsTab" 
+        component={AppointmentsHistoryScreen} 
+        options={{
+          tabBarLabel: 'Agenda',
+          tabBarIcon: ({ color, size }) => <Icon name="Calendar" color={color} size={size} />
+        }}
+      />
+      <Tab.Screen 
+        name="NotificationsTab" 
+        component={NotificationsScreen} 
+        options={{
+          tabBarLabel: 'Avisos',
+          tabBarIcon: ({ color, size }) => <Icon name="Bell" color={color} size={size} />
+        }}
+      />
+      <Tab.Screen 
         name="ProfileTab" 
-        component={ProfileScreen} 
+        component={ProfileStack} 
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ color, size }) => <Icon name="User" color={color} size={size} />

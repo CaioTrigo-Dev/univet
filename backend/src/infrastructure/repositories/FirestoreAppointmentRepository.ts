@@ -17,14 +17,15 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
     
     return new Appointment(
       docRef.id,
+      data.tutorId,
       data.petId,
       data.vetId,
       data.serviceId,
-      data.tutorId,
-      data.scheduledAt,
+      data.date,
       data.status,
       data.totalPrice,
       new Date(),
+      data.paymentStatus,
       data.notes
     );
   }
@@ -35,15 +36,17 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
     const data = doc.data() as Omit<IAppointment, 'id'>;
     return new Appointment(
       doc.id,
+      data.tutorId,
       data.petId,
       data.vetId,
       data.serviceId,
-      data.tutorId,
-      data.scheduledAt,
+      data.date,
       data.status,
       data.totalPrice,
       data.createdAt,
-      data.notes
+      data.paymentStatus,
+      data.notes,
+      data.updatedAt
     );
   }
 
@@ -53,15 +56,17 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
       const data = doc.data() as Omit<IAppointment, 'id'>;
       return new Appointment(
         doc.id,
+        data.tutorId,
         data.petId,
         data.vetId,
         data.serviceId,
-        data.tutorId,
-        data.scheduledAt,
+        data.date,
         data.status,
         data.totalPrice,
         data.createdAt,
-        data.notes
+        data.paymentStatus,
+        data.notes,
+        data.updatedAt
       );
     });
   }
@@ -70,22 +75,24 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
     // Busca simples por veterinário e data (simplificado para o skeleton)
     const snapshot = await this.collection
       .where('vetId', '==', vetId)
-      .where('scheduledAt', '>=', date)
+      .where('date', '>=', date)
       .get();
       
     return snapshot.docs.map(doc => {
       const data = doc.data() as Omit<IAppointment, 'id'>;
       return new Appointment(
         doc.id,
+        data.tutorId,
         data.petId,
         data.vetId,
         data.serviceId,
-        data.tutorId,
-        data.scheduledAt,
+        data.date,
         data.status,
         data.totalPrice,
         data.createdAt,
-        data.notes
+        data.paymentStatus,
+        data.notes,
+        data.updatedAt
       );
     });
   }

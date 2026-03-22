@@ -15,6 +15,7 @@ import { colors } from '../../tokens/colors';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 import { authService } from '../../services/auth.service';
+import { useToast } from '../../contexts/ToastContext';
 
 /**
  * Tela de Cadastro
@@ -25,11 +26,29 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!name || !email || !password) {
-      Alert.alert('Erro', 'Por favor, preencha os campos obrigatórios.');
+    // Validações do PDF/Checklist
+    if (name.length < 10 || name.length > 60) {
+      showToast('O nome deve ter entre 10 e 60 caracteres.', 'error');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      showToast('Informe um e-mail válido.', 'error');
+      return;
+    }
+
+    if (password.length < 6) {
+      showToast('A senha deve ter pelo menos 6 caracteres.', 'error');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showToast('As senhas não coincidem.', 'error');
       return;
     }
 
@@ -42,13 +61,10 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
         password,
       });
 
-      Alert.alert(
-        'Sucesso', 
-        'Conta criada com sucesso! Faça login para continuar.',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-      );
+      showToast('Conta criada com sucesso! Faça login para continuar.', 'success');
+      navigation.navigate('Login');
     } catch (error: any) {
-      Alert.alert('Erro', error.message);
+      showToast(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -98,6 +114,15 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
             onChangeText={setPassword}
             leftIcon={<Icon name="Lock" size={18} color={colors.text.secondary} />}
           />
+
+          <Input 
+            label="Confirmar Senha" 
+            placeholder="Repita sua senha" 
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            leftIcon={<Icon name="CheckCircle" size={18} color={colors.text.secondary} />}
+          />
         </View>
 
         <Button 
@@ -105,6 +130,7 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
           loading={loading}
           onPress={handleRegister}
           style={styles.registerButton}
+          accessibilityLabel="Botão para criar nova conta"
         />
 
         <View style={styles.footer}>

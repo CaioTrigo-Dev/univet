@@ -18,6 +18,7 @@ export class FirestorePetRepository implements IPetRepository {
       data.breed,
       data.birthDate,
       data.tutorId,
+      data.createdAt || new Date(),
       data.photoUrl
     );
   }
@@ -33,6 +34,7 @@ export class FirestorePetRepository implements IPetRepository {
       data.breed,
       data.birthDate,
       data.tutorId,
+      data.createdAt || new Date(),
       data.photoUrl
     );
   }
@@ -48,6 +50,7 @@ export class FirestorePetRepository implements IPetRepository {
         data.breed,
         data.birthDate,
         data.tutorId,
+        data.createdAt || new Date(),
         data.photoUrl
       );
     });

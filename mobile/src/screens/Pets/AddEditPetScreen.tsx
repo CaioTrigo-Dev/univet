@@ -41,6 +41,7 @@ export const AddEditPetScreen: React.FC = () => {
         breed,
         birthDate: new Date(birthDate),
         tutorId: 'demo-tutor',
+        createdAt: new Date(),
       });
       Alert.alert('Sucesso', 'Pet cadastrado com sucesso!');
     } catch (error: any) {

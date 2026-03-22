@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth } from '../firebase/config';
+import { auth } from '../../firebase/config';
 
 /**
  * Middleware de Autenticação

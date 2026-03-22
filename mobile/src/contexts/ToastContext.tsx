@@ -1,42 +1,51 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Toast, ToastType } from '../components/molecules/Toast';
+import { View, StyleSheet, Animated } from 'react-native';
+import { Toast } from '../components/atoms/Toast';
 
-interface ToastContextType {
-  show: (message: string, type?: ToastType) => void;
-  hide: () => void;
+export interface ToastMessage {
+  id: string;
+  type: 'success' | 'error' | 'info';
+  message: string;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+interface ToastContextData {
+  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+}
 
-/**
- * ToastProvider
- * Provedor global para exibição de notificações (Toasts).
- */
+const ToastContext = createContext<ToastContextData>({} as ToastContextData);
+
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const show = useCallback((message: string, type: ToastType = 'success') => {
-    setToast({ message, type });
-    // Esconde automaticamente após 3 segundos
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    const id = Math.random().toString(36).substring(7);
+    setToasts((prev) => [...prev, { id, message, type }]);
+
     setTimeout(() => {
-      setToast(null);
+      setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3000);
   }, []);
 
-  const hide = useCallback(() => {
-    setToast(null);
-  }, []);
-
   return (
-    <ToastContext.Provider value={{ show, hide }}>
+    <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && <Toast message={toast.message} type={toast.type} onHide={hide} />}
+      <View style={styles.container} pointerEvents="none">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} type={toast.type} message={toast.message} />
+        ))}
+      </View>
     </ToastContext.Provider>
   );
 };
 
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) throw new Error('useToast must be used within a ToastProvider');
-  return context;
-};
+export const useToast = () => useContext(ToastContext);
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    right: 20,
+    zIndex: 9999,
+  },
+});
