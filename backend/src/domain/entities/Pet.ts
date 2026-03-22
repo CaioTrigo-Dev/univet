@@ -12,6 +12,7 @@ export class Pet implements IPet {
     public breed: string,
     public birthDate: Date,
     public readonly tutorId: string,
+    public createdAt: Date,
     public photoUrl?: string
   ) {}
 

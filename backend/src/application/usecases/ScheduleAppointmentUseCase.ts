@@ -15,7 +15,7 @@ export class ScheduleAppointmentUseCase {
 
   async execute(dto: ScheduleAppointmentDTO): Promise<Appointment> {
     // Regra: consulta deve ser no futuro
-    if (dto.scheduledAt <= new Date()) {
+    if (dto.date <= new Date()) {
       throw new Error('A consulta deve ser agendada para uma data futura.');
     }
 

@@ -7,20 +7,22 @@ import { Appointment as IAppointment } from '@univet/shared';
 export class Appointment implements IAppointment {
   constructor(
     public readonly id: string,
+    public tutorId: string,
     public petId: string,
     public vetId: string,
     public serviceId: string,
-    public tutorId: string,
-    public scheduledAt: Date,
-    public status: 'pending' | 'confirmed' | 'cancelled' | 'done',
+    public date: Date,
+    public status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled',
     public totalPrice: number,
     public createdAt: Date,
-    public notes?: string
+    public paymentStatus?: 'pending' | 'paid' | 'refunded',
+    public notes?: string,
+    public updatedAt?: Date
   ) {}
 
   // Verifica se a consulta ainda vai acontecer
   isUpcoming(): boolean {
-    return this.scheduledAt > new Date() && this.status !== 'cancelled';
+    return this.date > new Date() && this.status !== 'cancelled' && this.status !== 'completed';
   }
 
   // Verifica se o agendamento pode ser cancelado pelo usuário
@@ -28,3 +30,4 @@ export class Appointment implements IAppointment {
     return this.status === 'pending' || this.status === 'confirmed';
   }
 }
+
