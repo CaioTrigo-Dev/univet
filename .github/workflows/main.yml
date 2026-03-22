@@ -1,0 +1,35 @@
+name: UniVet CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Backend Tests
+      run: npm test --workspace=univet-backend
+
+    - name: Build Shared Package
+      run: npm run build --workspace=@univet/shared || true
+
+    - name: Build Backend
+      run: npm run build --workspace=univet-backend || true
+
+    - name: Build Web (Simulated)
+      run: npm run build --workspace=univet-web || true

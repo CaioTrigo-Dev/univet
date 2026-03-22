@@ -1,2 +1,4 @@
 # Documentação original do projeto a ser ignorada
-UNIVET_FINAL.md
+UNIVET_FINAL.md 
+.env
+node_modules
