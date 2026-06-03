@@ -4,10 +4,10 @@
   "private": true,
   "main": "src/server.ts",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.ts",
-    "seed": "ts-node src/infrastructure/firebase/seed.ts",
+    "start": "node dist/server.js",
+    "seed": "tsx src/infrastructure/firebase/seed.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "nodemon": "^3.0.1",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.1",
+    "tsx": "^4.0.0",
     "typescript": "^5.3.2"
   }
 }

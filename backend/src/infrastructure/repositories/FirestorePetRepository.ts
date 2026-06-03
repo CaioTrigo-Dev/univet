@@ -6,6 +6,13 @@ import { IPetRepository } from '../../domain/repositories/IPetRepository';
 /**
  * Implementação Firestore do repositório de Pets.
  */
+const resolveDate = (d: any): Date => {
+  if (d instanceof Date) return d;
+  if (typeof d?.toDate === 'function') return d.toDate();
+  if (d?._seconds !== undefined) return new Date(d._seconds * 1000);
+  return new Date(d);
+};
+
 export class FirestorePetRepository implements IPetRepository {
   private collection = db.collection('pets');
 
@@ -32,9 +39,9 @@ export class FirestorePetRepository implements IPetRepository {
       data.name,
       data.species,
       data.breed,
-      data.birthDate,
+      resolveDate(data.birthDate),
       data.tutorId,
-      data.createdAt || new Date(),
+      resolveDate(data.createdAt || new Date()),
       data.photoUrl
     );
   }
@@ -48,9 +55,9 @@ export class FirestorePetRepository implements IPetRepository {
         data.name,
         data.species,
         data.breed,
-        data.birthDate,
+        resolveDate(data.birthDate),
         data.tutorId,
-        data.createdAt || new Date(),
+        resolveDate(data.createdAt || new Date()),
         data.photoUrl
       );
     });

@@ -16,10 +16,13 @@ const controller = new PetsController();
 router.get('/', authMiddleware, (req, res, next) => controller.listMine(req, res, next));
 
 // POST /api/pets - Cadastrar novo pet (com validação de schema)
-router.post('/', 
-  authMiddleware, 
-  validate(CreatePetSchema), 
+router.post('/',
+  authMiddleware,
+  validate(CreatePetSchema),
   (req, res, next) => controller.create(req, res, next)
 );
+
+// PATCH /api/pets/:id - Atualizar pet
+router.patch('/:id', authMiddleware, (req, res, next) => controller.update(req, res, next));
 
 export default router;

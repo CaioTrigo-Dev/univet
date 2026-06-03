@@ -91,7 +91,7 @@ async function seedModel() {
         category: 'vaccine',
         price: 85.50,
         durationMinutes: 15,
-        imageUrl: 'https://images.unsplash.com/photo-1628131338278-56517e440c1e?auto=format&fit=crop&q=80&w=200',
+        imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=400',
         active: true,
         createdAt: now,
       },
@@ -102,6 +102,7 @@ async function seedModel() {
         category: 'grooming',
         price: 110.00,
         durationMinutes: 90,
+        imageUrl: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=400',
         active: true,
         createdAt: now,
       }
@@ -115,7 +116,7 @@ async function seedModel() {
     const pets = [
       {
         id: 'pet-1',
-        ownerId: 'user-tutor-1',
+        tutorId: 'user-tutor-1',
         name: 'Rex',
         species: 'dog',
         breed: 'Golden Retriever',
@@ -130,7 +131,7 @@ async function seedModel() {
       },
       {
         id: 'pet-2',
-        ownerId: 'user-tutor-1',
+        tutorId: 'user-tutor-1',
         name: 'Mimi',
         species: 'cat',
         breed: 'Siamês',

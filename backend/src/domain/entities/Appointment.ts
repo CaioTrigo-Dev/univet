@@ -12,7 +12,7 @@ export class Appointment implements IAppointment {
     public vetId: string,
     public serviceId: string,
     public date: Date,
-    public status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled',
+    public status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'cancellation_requested',
     public totalPrice: number,
     public createdAt: Date,
     public paymentStatus?: 'pending' | 'paid' | 'refunded',

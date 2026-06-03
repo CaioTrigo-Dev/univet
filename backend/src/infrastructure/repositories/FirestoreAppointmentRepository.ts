@@ -6,6 +6,13 @@ import { IAppointmentRepository } from '../../domain/repositories/IAppointmentRe
 /**
  * Implementação Firestore do repositório de Agendamentos.
  */
+const resolveDate = (d: any): Date => {
+  if (d instanceof Date) return d;
+  if (typeof d?.toDate === 'function') return d.toDate();
+  if (d?._seconds !== undefined) return new Date(d._seconds * 1000);
+  return new Date(d);
+};
+
 export class FirestoreAppointmentRepository implements IAppointmentRepository {
   private collection = db.collection('appointments');
 
@@ -40,13 +47,13 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
       data.petId,
       data.vetId,
       data.serviceId,
-      data.date,
+      resolveDate(data.date),
       data.status,
       data.totalPrice,
-      data.createdAt,
+      resolveDate(data.createdAt),
       data.paymentStatus,
       data.notes,
-      data.updatedAt
+      data.updatedAt ? resolveDate(data.updatedAt) : undefined
     );
   }
 
@@ -60,13 +67,13 @@ export class FirestoreAppointmentRepository implements IAppointmentRepository {
         data.petId,
         data.vetId,
         data.serviceId,
-        data.date,
+        resolveDate(data.date),
         data.status,
         data.totalPrice,
-        data.createdAt,
+        resolveDate(data.createdAt),
         data.paymentStatus,
         data.notes,
-        data.updatedAt
+        data.updatedAt ? resolveDate(data.updatedAt) : undefined
       );
     });
   }
