@@ -1,6 +1,6 @@
 import { Pet } from '@univet/shared';
 
-const API_URL = 'http://localhost:3000/api'; // Ajustar conforme o ambiente
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.15:3000/api';
 
 /**
  * Serviço de Pets (Mobile)
@@ -19,6 +19,23 @@ export const petsService = {
       throw new Error('Erro ao carregar pets.');
     }
 
+    return response.json();
+  },
+
+  // Atualiza um pet existente
+  async update(token: string, petId: string, data: Partial<Pet>): Promise<Pet> {
+    const response = await fetch(`${API_URL}/pets/${petId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Erro ao atualizar pet.');
+    }
     return response.json();
   },
 

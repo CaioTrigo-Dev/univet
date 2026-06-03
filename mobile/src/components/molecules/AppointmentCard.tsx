@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Card } from '../organisms/Card';
 import { Icon } from '../atoms/Icon';
 import { Appointment } from '@univet/shared';
+import { useColors } from '../../contexts/ThemeContext';
 import { typography } from '../../tokens/typography';
-import { colors } from '../../tokens/colors';
 import { spacing } from '../../tokens/spacing';
 
 interface AppointmentCardProps {
@@ -12,9 +12,11 @@ interface AppointmentCardProps {
 }
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment }) => {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   const dateObj = new Date(appointment.date);
   const day = dateObj.getDate().toString().padStart(2, '0');
-  
   const monthNames = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
   const month = monthNames[dateObj.getMonth()];
 
@@ -36,46 +38,20 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment })
   );
 };
 
-const styles = StyleSheet.create({
-  appointmentContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dateBox: {
-    width: 50,
-    height: 50,
-    backgroundColor: colors.primary.main,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  dateDay: {
-    color: '#fff',
-    fontSize: typography.sizes.lg,
-    fontFamily: typography.fonts.heading,
-  },
-  dateMonth: {
-    color: '#fff',
-    fontSize: 10,
-    fontFamily: typography.fonts.subheading,
-  },
-  appointmentInfo: {
-    flex: 1,
-  },
-  appointmentTitle: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.heading,
-    color: colors.text.primary,
-  },
-  appointmentPet: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    color: colors.text.secondary,
-  },
-  appointmentVet: {
-    fontSize: typography.sizes.xs,
-    fontFamily: typography.fonts.subheading,
-    color: colors.primary.main,
-  },
-});
+function makeStyles(colors: ReturnType<typeof useColors>) {
+  return StyleSheet.create({
+    appointmentContent: { flexDirection: 'row', alignItems: 'center' },
+    dateBox: {
+      width: 50, height: 50,
+      backgroundColor: colors.primary.main,
+      borderRadius: 12, alignItems: 'center', justifyContent: 'center',
+      marginRight: spacing.md,
+    },
+    dateDay: { color: '#fff', fontSize: typography.sizes.lg, fontFamily: typography.fonts.heading },
+    dateMonth: { color: '#fff', fontSize: 10, fontFamily: typography.fonts.subheading },
+    appointmentInfo: { flex: 1 },
+    appointmentTitle: { fontSize: typography.sizes.md, fontFamily: typography.fonts.heading, color: colors.text.primary },
+    appointmentPet: { fontSize: typography.sizes.sm, fontFamily: typography.fonts.body, color: colors.text.secondary },
+    appointmentVet: { fontSize: typography.sizes.xs, fontFamily: typography.fonts.subheading, color: colors.primary.main },
+  });
+}

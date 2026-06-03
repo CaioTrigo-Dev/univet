@@ -1,12 +1,20 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signOut as firebaseSignOut, 
-  onAuthStateChanged 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  updateProfile,
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { User } from '@univet/shared';
+
+interface User {
+  uid: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: Date;
+}
 
 interface AuthContextData {
   user: User | null;
@@ -25,14 +33,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Aqui buscaríamos o perfil adicional no Firestore via API ou direto
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
           name: firebaseUser.displayName || '',
-          role: 'tutor', // Default
+          role: 'tutor',
           createdAt: new Date(),
-        } as User);
+        });
       } else {
         setUser(null);
       }
@@ -48,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, name: string) => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
-    // Podemos atualizar o perfil do usuário aqui se necessário
+    await updateProfile(result.user, { displayName: name });
   };
 
   const signOut = async () => {

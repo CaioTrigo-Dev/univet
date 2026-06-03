@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.15:3000/api';
 
 export interface Service {
   id: string;
@@ -15,7 +15,7 @@ export interface Service {
 export const servicesService = {
   getAll: async (): Promise<Service[]> => {
     const response = await fetch(`${API_URL}/services`);
-    if (!response.ok) throw new Error('Failed to fetch services');
+    if (!response.ok) throw new Error('Failed to fetch services ');
     return response.json();
   },
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors as lightColors, darkColors } from '../tokens/colors';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -45,4 +46,9 @@ export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) throw new Error('useTheme must be used within a ThemeProvider');
   return context;
+};
+
+export const useColors = () => {
+  const { isDark } = useTheme();
+  return isDark ? darkColors : lightColors;
 };

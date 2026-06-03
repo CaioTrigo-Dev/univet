@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
 import { Card } from '../../components/organisms/Card';
 import { Icon } from '../../components/atoms/Icon';
-import { colors } from '../../tokens/colors';
+import { useColors } from '../../contexts/ThemeContext';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 
@@ -13,18 +13,16 @@ const MOCK_SERVICES = [
   { id: '4', name: 'Cirurgia Geral', price: 1500, category: 'Complexo' },
 ];
 
-/**
- * Tela de Busca
- * Permite filtrar serviços e veterinários.
- */
 export const SearchScreen: React.FC = () => {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(MOCK_SERVICES);
 
   const handleSearch = (text: string) => {
     setQuery(text);
-    const filtered = MOCK_SERVICES.filter(s => 
-      s.name.toLowerCase().includes(text.toLowerCase()) || 
+    const filtered = MOCK_SERVICES.filter(s =>
+      s.name.toLowerCase().includes(text.toLowerCase()) ||
       s.category.toLowerCase().includes(text.toLowerCase())
     );
     setResults(filtered);
@@ -35,19 +33,21 @@ export const SearchScreen: React.FC = () => {
       <View style={styles.searchHeader}>
         <View style={styles.searchBar}>
           <Icon name="Search" size={20} color={colors.text.secondary} />
-          <TextInput 
+          <TextInput
             style={styles.searchInput}
             placeholder="O que você está procurando?"
+            placeholderTextColor={colors.text.secondary}
             value={query}
             onChangeText={handleSearch}
           />
         </View>
       </View>
 
-      <FlatList 
+      <FlatList
         data={results}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>Nenhum resultado encontrado.</Text>
@@ -69,64 +69,35 @@ export const SearchScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
-  },
-  searchHeader: {
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
-    backgroundColor: '#fff',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: spacing.md,
-    height: 50,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: spacing.sm,
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.body,
-    color: colors.text.primary,
-  },
-  list: {
-    padding: spacing.lg,
-  },
-  itemCard: {
-    marginBottom: spacing.md,
-  },
-  itemInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemName: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.heading,
-    color: colors.text.primary,
-  },
-  itemCategory: {
-    fontSize: typography.sizes.xs,
-    fontFamily: typography.fonts.body,
-    color: colors.text.secondary,
-    textTransform: 'uppercase',
-  },
-  itemPrice: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.heading,
-    color: colors.secondary.main,
-  },
-  empty: {
-    alignItems: 'center',
-    marginTop: spacing.xxl,
-  },
-  emptyText: {
-    color: colors.text.secondary,
-    fontFamily: typography.fonts.body,
-  },
-});
+function makeStyles(colors: ReturnType<typeof useColors>) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background.default },
+    searchHeader: {
+      padding: spacing.lg, paddingTop: spacing.xl,
+      backgroundColor: colors.background.paper,
+    },
+    searchBar: {
+      flexDirection: 'row', alignItems: 'center',
+      backgroundColor: colors.background.default,
+      borderRadius: 12, paddingHorizontal: spacing.md, height: 50,
+      borderWidth: 1, borderColor: colors.border.light,
+    },
+    searchInput: {
+      flex: 1, marginLeft: spacing.sm,
+      fontSize: typography.sizes.md,
+      fontFamily: typography.fonts.body,
+      color: colors.text.primary,
+    },
+    list: { padding: spacing.lg },
+    itemCard: { marginBottom: spacing.md },
+    itemInfo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    itemName: { fontSize: typography.sizes.md, fontFamily: typography.fonts.heading, color: colors.text.primary },
+    itemCategory: {
+      fontSize: typography.sizes.xs, fontFamily: typography.fonts.body,
+      color: colors.text.secondary, textTransform: 'uppercase',
+    },
+    itemPrice: { fontSize: typography.sizes.md, fontFamily: typography.fonts.heading, color: colors.secondary.main },
+    empty: { alignItems: 'center', marginTop: spacing.xxl },
+    emptyText: { color: colors.text.secondary, fontFamily: typography.fonts.body },
+  });
+}

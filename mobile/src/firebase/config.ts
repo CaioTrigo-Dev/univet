@@ -1,13 +1,7 @@
-import { initializeApp } from 'firebase/app';
-// @ts-ignore - The types in firebase@12 occasionally miss React Native exports, but it exists at runtime.
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeApp, getApps } from 'firebase/app';
+import { initializeAuth, getAuth, inMemoryPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/**
- * Configuração do Firebase Client
- * Utiliza variáveis de ambiente injetadas pelo Expo/Vite.
- */
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -17,9 +11,15 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
-});
+// initializeAuth lança erro se chamado duas vezes (hot reload); getAuth retorna a instância existente
+let authInstance;
+try {
+  authInstance = initializeAuth(app, { persistence: inMemoryPersistence });
+} catch {
+  authInstance = getAuth(app);
+}
+export const auth = authInstance;
+
 export const db = getFirestore(app);

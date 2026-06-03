@@ -2,23 +2,21 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeStack } from './HomeStack';
 import { PetsStack } from './PetsStack';
-import { AppointmentsHistoryScreen } from '../screens/Appointments/AppointmentsHistoryScreen';
+import { AppointmentsStack } from './AppointmentsStack';
 import { NotificationsScreen } from '../screens/Notifications/NotificationsScreen';
 import { ProfileStack } from './ProfileStack';
 import { Icon } from '../components/atoms/Icon';
-import { colors } from '../tokens/colors';
+import { useColors } from '../contexts/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
-/**
- * AppNavigator (Navegação Principal)
- * Barra de abas inferior para usuários autenticados.
- */
 export const AppNavigator = () => {
+  const colors = useColors();
   return (
     <Tab.Navigator screenOptions={{
       tabBarActiveTintColor: colors.primary.main,
       tabBarInactiveTintColor: colors.text.secondary,
+      tabBarStyle: { backgroundColor: colors.background.paper, borderTopColor: colors.border.light },
       headerShown: false,
     }}>
       <Tab.Screen 
@@ -37,9 +35,9 @@ export const AppNavigator = () => {
           tabBarIcon: ({ color, size }) => <Icon name="PawPrint" color={color} size={size} />
         }}
       />
-      <Tab.Screen 
-        name="AppointmentsTab" 
-        component={AppointmentsHistoryScreen} 
+      <Tab.Screen
+        name="AppointmentsTab"
+        component={AppointmentsStack}
         options={{
           tabBarLabel: 'Agenda',
           tabBarIcon: ({ color, size }) => <Icon name="Calendar" color={color} size={size} />

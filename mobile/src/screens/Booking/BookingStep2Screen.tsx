@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useBooking } from '../../contexts/BookingContext';
 import { Card } from '../../components/organisms/Card';
 import { Icon } from '../../components/atoms/Icon';
-import { colors } from '../../tokens/colors';
+import { useColors } from '../../contexts/ThemeContext';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 
@@ -14,26 +14,26 @@ const SERVICES = [
   { id: '4', name: 'Cirurgia Geral', price: 500 },
 ];
 
-/**
- * Agendamento Passo 2: Selecionar Serviço
- */
 export const BookingStep2Screen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const { setService } = useBooking();
 
-  const handleSelectService = (id: string, price: number) => {
-    setService(id, price);
+  const handleSelectService = (id: string, price: number, name: string) => {
+    setService(id, price, name);
     navigation.navigate('BookingStep3');
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Qual o serviço desejado?</Text>
-      
+
       <FlatList
         data={SERVICES}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelectService(item.id, item.price)}>
+          <TouchableOpacity onPress={() => handleSelectService(item.id, item.price, item.name)}>
             <Card style={styles.serviceCard}>
               <View style={styles.serviceInfo}>
                 <View>
@@ -50,35 +50,21 @@ export const BookingStep2Screen: React.FC<{ navigation: any }> = ({ navigation }
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: spacing.lg,
-    backgroundColor: colors.background.default,
-  },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    color: colors.primary.main,
-    marginBottom: spacing.xl,
-  },
-  serviceCard: {
-    marginBottom: spacing.md,
-  },
-  serviceInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  serviceName: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.subheading,
-    color: colors.text.primary,
-  },
-  servicePrice: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    color: colors.secondary.main,
-    marginTop: 2,
-  },
-});
+function makeStyles(colors: ReturnType<typeof useColors>) {
+  return StyleSheet.create({
+    container: { flex: 1, padding: spacing.lg, backgroundColor: colors.background.default },
+    title: {
+      fontSize: typography.sizes.xl, fontFamily: typography.fonts.heading,
+      color: colors.primary.main, marginBottom: spacing.xl,
+    },
+    serviceCard: { marginBottom: spacing.md },
+    serviceInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    serviceName: {
+      fontSize: typography.sizes.md, fontFamily: typography.fonts.subheading, color: colors.text.primary,
+    },
+    servicePrice: {
+      fontSize: typography.sizes.sm, fontFamily: typography.fonts.body,
+      color: colors.secondary.main, marginTop: 2,
+    },
+  });
+}

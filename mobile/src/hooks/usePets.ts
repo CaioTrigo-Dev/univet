@@ -1,18 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Pet } from '@univet/shared';
 import { petsService } from '../services/pets.service';
-import { useAuth } from '../contexts/AuthContext';
+import { auth } from '../firebase/config';
 
-/**
- * Hook usePets
- * Abstrai a lógica de gestão de pets para os componentes.
- */
 export function usePets() {
   const [pets, setPets] = useState<Pet[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth(); // Assume-se que o token está disponível no contexto
+  const [loading, setLoading] = useState(true);
 
-  const fetchPets = useCallback(async (token: string) => {
+  const fetchPets = useCallback(async () => {
+    const token = await auth.currentUser?.getIdToken();
+    if (!token) { setLoading(false); return; }
     setLoading(true);
     try {
       const data = await petsService.listMine(token);
@@ -24,9 +21,9 @@ export function usePets() {
     }
   }, []);
 
-  return {
-    pets,
-    loading,
-    fetchPets,
-  };
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
+
+  return { pets, loading, fetchPets };
 }

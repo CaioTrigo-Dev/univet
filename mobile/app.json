@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "UniVet",
+    "slug": "univet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "univet",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.univet.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.univet.app"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

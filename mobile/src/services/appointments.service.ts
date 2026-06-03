@@ -1,6 +1,6 @@
 import { Appointment } from '@univet/shared';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.15:3000/api';
 
 /**
  * Serviço de Agendamentos (Mobile)
@@ -36,5 +36,25 @@ export const appointmentsService = {
     }
 
     return response.json();
+  },
+
+  async cancel(token: string, id: string, reason?: string): Promise<void> {
+    const response = await fetch(`${API_URL}/appointments/${id}/cancel`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ reason }),
+    });
+
+    if (!response.ok) {
+      let message = 'Erro ao cancelar agendamento.';
+      try {
+        const errorData = await response.json();
+        message = errorData.error || message;
+      } catch {}
+      throw new Error(message);
+    }
   },
 };

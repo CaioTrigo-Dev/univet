@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, ActivityIndicator, Animated } from 'react-native';
-import { colors } from '../../tokens/colors';
+import { useColors } from '../../contexts/ThemeContext';
 import { Icon } from '../../components/atoms/Icon';
 
-/**
- * SplashScreen
- * Tela de carregamento inicial com animação de fade.
- */
 export const SplashScreen: React.FC = () => {
-  const opacity = new Animated.Value(0);
+  const colors = useColors();
+  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -19,7 +16,7 @@ export const SplashScreen: React.FC = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.primary.main }]}>
       <Animated.View style={{ opacity, alignItems: 'center' }}>
         <Icon name="PawPrint" size={80} color="#fff" />
         <ActivityIndicator size="large" color="#fff" style={{ marginTop: 40 }} />
@@ -29,10 +26,5 @@ export const SplashScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primary.main,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

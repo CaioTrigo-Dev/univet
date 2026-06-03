@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ViewProps } from 'react-native';
-import { colors } from '../../tokens/colors';
+import { useColors } from '../../contexts/ThemeContext';
 import { spacing } from '../../tokens/spacing';
 
 interface CardProps extends ViewProps {
@@ -8,23 +8,11 @@ interface CardProps extends ViewProps {
   padding?: keyof typeof spacing;
 }
 
-/**
- * Componente Organism: Card
- * Container básico com sombra e bordas arredondadas.
- */
-export const Card: React.FC<CardProps> = ({ 
-  children, 
-  padding = 'md', 
-  style, 
-  ...rest 
-}) => {
+export const Card: React.FC<CardProps> = ({ children, padding = 'md', style, ...rest }) => {
+  const colors = useColors();
   return (
-    <View 
-      style={[
-        styles.card, 
-        { padding: spacing[padding] }, 
-        style
-      ]} 
+    <View
+      style={[styles.card, { backgroundColor: colors.background.default, padding: spacing[padding] }, style]}
       {...rest}
     >
       {children}
@@ -34,11 +22,8 @@ export const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.background.default,
     borderRadius: 16,
-    // Sombra suave (Android)
     elevation: 3,
-    // Sombra suave (iOS)
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

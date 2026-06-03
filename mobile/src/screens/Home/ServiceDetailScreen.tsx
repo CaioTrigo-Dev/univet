@@ -1,20 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { Button } from '../../components/atoms/Button';
 import { Card } from '../../components/organisms/Card';
-import { Icon } from '../../components/atoms/Icon';
-import { colors } from '../../tokens/colors';
+import { Icon, IconName } from '../../components/atoms/Icon';
+import { useColors } from '../../contexts/ThemeContext';
 import { spacing } from '../../tokens/spacing';
 import { typography } from '../../tokens/typography';
 import { servicesService } from '../../services/services.service';
 import { useBooking } from '../../contexts/BookingContext';
 import { Skeleton } from '../../components/atoms/Skeleton';
 
-/**
- * Tela de Detalhes do Serviço
- * Exibe foto, preço, duração e descrição.
- */
-export const ServiceDetailScreen: React.FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
+const SERVICE_CONFIG: Record<string, { bg: string; iconColor: string; icon: IconName; defaultImageUrl?: string }> = {
+  consultation: { bg: '#E3F2FD', iconColor: '#1565C0', icon: 'Stethoscope',
+    defaultImageUrl: 'https://plus.unsplash.com/premium_photo-1661916447474-235409b19e16?auto=format&fit=crop&w=800&q=80' },
+  consulta:     { bg: '#E3F2FD', iconColor: '#1565C0', icon: 'Stethoscope',
+    defaultImageUrl: 'https://plus.unsplash.com/premium_photo-1661916447474-235409b19e16?auto=format&fit=crop&w=800&q=80' },
+  vaccine:      { bg: '#E8F5E9', iconColor: '#2E7D32', icon: 'Syringe',
+    defaultImageUrl: 'https://plus.unsplash.com/premium_photo-1702599116608-639ae9da1127?auto=format&fit=crop&w=800&q=80' },
+  vacina:       { bg: '#E8F5E9', iconColor: '#2E7D32', icon: 'Syringe',
+    defaultImageUrl: 'https://plus.unsplash.com/premium_photo-1702599116608-639ae9da1127?auto=format&fit=crop&w=800&q=80' },
+  grooming:     { bg: '#F3E5F5', iconColor: '#6A1B9A', icon: 'Scissors',
+    defaultImageUrl: 'https://images.unsplash.com/photo-1583534778255-5d67d3dcf95d?auto=format&fit=crop&w=800&q=80' },
+  estetica:     { bg: '#F3E5F5', iconColor: '#6A1B9A', icon: 'Scissors',
+    defaultImageUrl: 'https://images.unsplash.com/photo-1583534778255-5d67d3dcf95d?auto=format&fit=crop&w=800&q=80' },
+  banho:        { bg: '#E0F7FA', iconColor: '#00838F', icon: 'Droplets',
+    defaultImageUrl: 'https://images.unsplash.com/photo-1583534778255-5d67d3dcf95d?auto=format&fit=crop&w=800&q=80' },
+  emergency:    { bg: '#FFEBEE', iconColor: '#B71C1C', icon: 'AlertCircle' },
+  emergencia:   { bg: '#FFEBEE', iconColor: '#B71C1C', icon: 'AlertCircle' },
+  surgery:      { bg: '#FFF3E0', iconColor: '#E65100', icon: 'Activity' },
+  cirurgia:     { bg: '#FFF3E0', iconColor: '#E65100', icon: 'Activity' },
+  exam:         { bg: '#E8EAF6', iconColor: '#283593', icon: 'FileText' },
+  exame:        { bg: '#E8EAF6', iconColor: '#283593', icon: 'FileText' },
+};
+
+const getServiceConfig = (category: string) =>
+  SERVICE_CONFIG[category?.toLowerCase()] ??
+  { bg: '#F1F8E9', iconColor: '#33691E', icon: 'Heart' as IconName };
+
+export const ServiceDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, navigation }) => {
+  const colors = useColors();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const { serviceId } = route.params;
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -35,8 +60,7 @@ export const ServiceDetailScreen: React.FC<{ route: any, navigation: any }> = ({
   }, [serviceId]);
 
   const handleSchedule = () => {
-    setBookingService(service.id, service.price);
-    // Navega para o fluxo de agendamento começando pela escolha do Pet e data
+    setBookingService(service.id, service.price, service.name);
     navigation.navigate('BookingStack');
   };
 
@@ -63,21 +87,25 @@ export const ServiceDetailScreen: React.FC<{ route: any, navigation: any }> = ({
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        {service.imageUrl ? (
-          <Image source={{ uri: service.imageUrl }} style={styles.image} />
-        ) : (
-          <View style={[styles.image, styles.imagePlaceholder]}>
-            <Icon name="Activity" size={48} color={colors.primary.main} />
-          </View>
-        )}
-        
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {(() => {
+          const cfg = getServiceConfig(service.category);
+          const imgUrl = service.imageUrl || cfg.defaultImageUrl;
+          return imgUrl ? (
+            <Image source={{ uri: imgUrl }} style={styles.image} />
+          ) : (
+            <View style={[styles.image, styles.imagePlaceholder, { backgroundColor: cfg.bg }]}>
+              <Icon name={cfg.icon} size={72} color={cfg.iconColor} />
+            </View>
+          );
+        })()}
+
         <View style={styles.content}>
           <View style={styles.headerRow}>
             <Text style={styles.title}>{service.name}</Text>
             <Text style={styles.price}>R$ {service.price.toFixed(2)}</Text>
           </View>
-          
+
           <View style={styles.badgesRow}>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{service.category}</Text>
@@ -104,85 +132,46 @@ export const ServiceDetailScreen: React.FC<{ route: any, navigation: any }> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.default,
-  },
-  image: {
-    width: '100%',
-    height: 250,
-  },
-  imagePlaceholder: {
-    backgroundColor: '#E8F5E9',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: spacing.sm,
-  },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    color: colors.text.primary,
-    flex: 1,
-    marginRight: spacing.sm,
-  },
-  price: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    color: colors.secondary.main,
-  },
-  badgesRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.xl,
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: spacing.sm,
-  },
-  badgeText: {
-    fontSize: typography.sizes.xs,
-    fontFamily: typography.fonts.subheading,
-    color: colors.text.secondary,
-    textTransform: 'uppercase',
-  },
-  descCard: {
-    marginTop: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.heading,
-    color: colors.text.primary,
-    marginBottom: spacing.sm,
-  },
-  description: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.body,
-    color: colors.text.secondary,
-    lineHeight: 24,
-  },
-  footer: {
-    padding: spacing.lg,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
-  },
-  errorText: {
-    fontSize: typography.sizes.md,
-    fontFamily: typography.fonts.body,
-    color: '#D32F2F',
-  }
-});
+function makeStyles(colors: ReturnType<typeof useColors>) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background.default },
+    image: { width: '100%', height: 250 },
+    imagePlaceholder: { backgroundColor: colors.primary.light, alignItems: 'center', justifyContent: 'center' },
+    content: { padding: spacing.lg, paddingBottom: spacing.xxl },
+    headerRow: {
+      flexDirection: 'row', justifyContent: 'space-between',
+      alignItems: 'baseline', marginBottom: spacing.sm,
+    },
+    title: {
+      fontSize: typography.sizes.xl, fontFamily: typography.fonts.heading,
+      color: colors.text.primary, flex: 1, marginRight: spacing.sm,
+    },
+    price: { fontSize: typography.sizes.xl, fontFamily: typography.fonts.heading, color: colors.secondary.main },
+    badgesRow: { flexDirection: 'row', marginBottom: spacing.xl },
+    badge: {
+      flexDirection: 'row', alignItems: 'center',
+      backgroundColor: colors.background.paper,
+      paddingHorizontal: spacing.sm, paddingVertical: 4,
+      borderRadius: 12, marginRight: spacing.sm,
+    },
+    badgeText: {
+      fontSize: typography.sizes.xs, fontFamily: typography.fonts.subheading,
+      color: colors.text.secondary, textTransform: 'uppercase',
+    },
+    descCard: { marginTop: spacing.md },
+    sectionTitle: {
+      fontSize: typography.sizes.md, fontFamily: typography.fonts.heading,
+      color: colors.text.primary, marginBottom: spacing.sm,
+    },
+    description: {
+      fontSize: typography.sizes.md, fontFamily: typography.fonts.body,
+      color: colors.text.secondary, lineHeight: 24,
+    },
+    footer: {
+      padding: spacing.lg,
+      backgroundColor: colors.background.paper,
+      borderTopWidth: 1, borderTopColor: colors.border.light,
+    },
+    errorText: { fontSize: typography.sizes.md, fontFamily: typography.fonts.body, color: '#D32F2F' },
+  });
+}

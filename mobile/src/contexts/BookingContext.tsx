@@ -4,7 +4,9 @@ import { Pet, Appointment } from '@univet/shared';
 interface BookingData {
   pet?: Pet;
   serviceId?: string;
+  serviceName?: string;
   vetId?: string;
+  vetName?: string;
   scheduledAt?: Date;
   totalPrice?: number;
 }
@@ -12,8 +14,8 @@ interface BookingData {
 interface BookingContextData {
   booking: BookingData;
   setPet: (pet: Pet) => void;
-  setService: (serviceId: string, price: number) => void;
-  setVetAndTime: (vetId: string, date: Date) => void;
+  setService: (serviceId: string, price: number, serviceName: string) => void;
+  setVetAndTime: (vetId: string, date: Date, vetName: string) => void;
   resetBooking: () => void;
 }
 
@@ -28,11 +30,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const setPet = (pet: Pet) => setBooking(prev => ({ ...prev, pet }));
   
-  const setService = (serviceId: string, price: number) => 
-    setBooking(prev => ({ ...prev, serviceId, totalPrice: price }));
+  const setService = (serviceId: string, price: number, serviceName: string) =>
+    setBooking(prev => ({ ...prev, serviceId, totalPrice: price, serviceName }));
 
-  const setVetAndTime = (vetId: string, date: Date) => 
-    setBooking(prev => ({ ...prev, vetId, scheduledAt: date }));
+  const setVetAndTime = (vetId: string, date: Date, vetName: string) =>
+    setBooking(prev => ({ ...prev, vetId, scheduledAt: date, vetName }));
 
   const resetBooking = () => setBooking({});
 
