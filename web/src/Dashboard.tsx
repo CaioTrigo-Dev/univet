@@ -26,7 +26,7 @@ const Dashboard = () => (
           <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
             <PeopleIcon sx={{ fontSize: 40, mr: 2, color: '#1976D2' }} />
             <Box>
-              <Typography color="textSecondary" gutterBottom>Tutores</Text>
+              <Typography color="textSecondary" gutterBottom>Tutores</Typography>
               <Typography variant="h5">1,240</Typography>
             </Box>
           </CardContent>
@@ -37,7 +37,7 @@ const Dashboard = () => (
           <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
             <PetsIcon sx={{ fontSize: 40, mr: 2, color: '#388E3C' }} />
             <Box>
-              <Typography color="textSecondary" gutterBottom>Pets Ativos</Text>
+              <Typography color="textSecondary" gutterBottom>Pets Ativos</Typography>
               <Typography variant="h5">3,120</Typography>
             </Box>
           </CardContent>
@@ -48,7 +48,7 @@ const Dashboard = () => (
           <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
             <EventAvailableIcon sx={{ fontSize: 40, mr: 2, color: '#F57C00' }} />
             <Box>
-              <Typography color="textSecondary" gutterBottom>Consultas Hoje</Text>
+              <Typography color="textSecondary" gutterBottom>Consultas Hoje</Typography>
               <Typography variant="h5">48</Typography>
             </Box>
           </CardContent>

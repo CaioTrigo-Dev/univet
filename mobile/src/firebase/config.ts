@@ -1,6 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { initializeAuth, getAuth, inMemoryPersistence } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -13,13 +12,4 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// initializeAuth lança erro se chamado duas vezes (hot reload); getAuth retorna a instância existente
-let authInstance;
-try {
-  authInstance = initializeAuth(app, { persistence: inMemoryPersistence });
-} catch {
-  authInstance = getAuth(app);
-}
-export const auth = authInstance;
-
-export const db = getFirestore(app);
+export const auth = getAuth(app);

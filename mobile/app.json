@@ -6,7 +6,11 @@
     "orientation": "portrait",
     "scheme": "univet",
     "userInterfaceStyle": "light",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.univet.app"
@@ -18,7 +22,13 @@
       "package": "com.univet.app"
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Precisamos da sua localização para encontrar a unidade UniVet mais próxima."
+        }
+      ]
     ]
   }
 }

@@ -1,6 +1,6 @@
 import { Pet } from '@univet/shared';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.15:3000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.9:3000/api';
 
 /**
  * Serviço de Pets (Mobile)
@@ -40,7 +40,7 @@ export const petsService = {
   },
 
   // Cadastra um novo pet
-  async create(token: string, data: Omit<Pet, 'id' | 'ageInYears' | 'isAdult'>): Promise<Pet> {
+  async create(token: string, data: Omit<Pet, 'id' | 'createdAt'>): Promise<Pet> {
     const response = await fetch(`${API_URL}/pets`, {
       method: 'POST',
       headers: {

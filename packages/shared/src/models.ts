@@ -65,7 +65,7 @@ export interface Appointment {
   vetId: string;
   serviceId: string;
   date: Date;
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'cancellation_requested';
   notes?: string;
   totalPrice: number;
   paymentStatus?: 'pending' | 'paid' | 'refunded';

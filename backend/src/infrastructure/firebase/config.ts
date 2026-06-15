@@ -1,24 +1,22 @@
 import * as admin from 'firebase-admin';
-import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 
-dotenv.config();
-
-/**
- * Configuração do Firebase Admin SDK
- * Utiliza variáveis de ambiente para segurança.
- */
-const firebaseConfig = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-};
+// Read service account key file directly — avoids env var \n parsing issues
+const keyFilePath = path.resolve(__dirname, '../../../serviceAccountKey.json');
+const serviceAccount = JSON.parse(fs.readFileSync(keyFilePath, 'utf-8'));
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(firebaseConfig),
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 
 export const auth = admin.auth();
-export const db = admin.firestore();
+
+const firestore = admin.firestore();
+// preferRest avoids gRPC/google-gax connectivity issues on Windows
+firestore.settings({ preferRest: true });
+export const db = firestore;
+
 export const storage = admin.storage();

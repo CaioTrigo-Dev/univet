@@ -1,6 +1,6 @@
 import { User } from '@univet/shared';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.15:3000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.9:3000/api';
 
 /**
  * Serviço de Autenticação (Mobile)

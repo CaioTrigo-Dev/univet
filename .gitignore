@@ -1,6 +1,5 @@
 # Documentação original do projeto a ser ignorada
-UNIVET_FINAL.md 
-.env
+UNIVET_FINAL.md
 node_modules
 coverage
 .expo
