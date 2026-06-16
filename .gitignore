@@ -5,3 +5,4 @@ coverage
 .expo
 backend/coverage
 mobile/.expo
+backend/serviceAccountKey.json
