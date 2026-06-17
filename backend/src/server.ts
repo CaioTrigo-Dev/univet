@@ -39,6 +39,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Global error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[ERROR]', req.method, req.path, err?.message || err);
+  res.status(err?.status || 500).json({ error: err?.message || 'Internal server error' });
+});
+
 // Inicialização do servidor HTTP
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

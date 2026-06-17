@@ -34,7 +34,15 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
       await authService.register({ name, email, phone, password });
       showToast('Conta criada com sucesso!', 'success');
     } catch (error: any) {
-      showToast(error.message, 'error');
+      const code = error?.code || '';
+      const msgs: Record<string, string> = {
+        'auth/email-already-in-use': 'Este e-mail já está cadastrado. Tente fazer login.',
+        'auth/invalid-email': 'E-mail inválido. Verifique e tente novamente.',
+        'auth/weak-password': 'Senha muito fraca. Use pelo menos 6 caracteres.',
+        'auth/network-request-failed': 'Sem conexão com a internet. Tente novamente.',
+        'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos.',
+      };
+      showToast(msgs[code] || 'Erro ao criar conta. Tente novamente.', 'error');
     } finally {
       setLoading(false);
     }

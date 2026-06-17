@@ -71,7 +71,6 @@ export const AddEditPetScreen: React.FC<{ navigation: any }> = ({ navigation }) 
         breed: breed.trim(),
         birthDate: parsedDate,
         tutorId: auth.currentUser!.uid,
-        createdAt: new Date(),
       });
 
       showToast('Pet cadastrado com sucesso!', 'success');

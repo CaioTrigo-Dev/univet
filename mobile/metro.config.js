@@ -19,6 +19,17 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// @expo/metro-runtime is auto-injected by Expo as a pre-module for ALL platforms.
+// On native (iOS/Android) its install.native.ts seals global.fetch and installs
+// window.location BEFORE the app runs, corrupting Firebase Auth initialization.
+// We remove it from pre-modules entirely; for web it is explicitly imported first
+// in index.web.js so it still polyfills the browser environment correctly.
+const originalGetModules = config.serializer.getModulesRunBeforeMainModule;
+config.serializer.getModulesRunBeforeMainModule = (entryFilePath) => {
+  const modules = originalGetModules ? originalGetModules(entryFilePath) : [];
+  return modules.filter(m => !m.includes('metro-runtime'));
+};
+
 // Força todos os imports de 'react' e 'react/*' a resolver do mobile/node_modules
 // para evitar conflito quando pacotes do root usam uma versão diferente do React.
 config.resolver.resolveRequest = (context, moduleName, platform) => {
